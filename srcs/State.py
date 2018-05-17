@@ -1,6 +1,5 @@
 from random import shuffle
 import re
-from srcs.NPuzzleError import NPuzzleError
 
 class State:
 	def __generateRandom(self, size):
@@ -75,6 +74,10 @@ class State:
 			ret += str(i) + "\n"
 		return ret
 
+	def manhattanDistance(self):
+		for i in range (self.size * self.size - 1):
+			 pass
+
 	def __init__(self, *args, **kwargs):
 		self.state = []
 		if ("file" in kwargs):
@@ -93,4 +96,3 @@ class State:
 			self.size = len(kwargs["liste"])
 		else:
 			raise NPuzzleError("You must specify a 'file' or 'size' argument.")
-

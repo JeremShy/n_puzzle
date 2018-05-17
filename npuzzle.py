@@ -2,8 +2,38 @@
 
 import argparse
 import sys
-from State import State
-from NPuzzleError import NPuzzleError
+from srcs.State import State
+from srcs.NPuzzleError import NPuzzleError
+from srcs.algo import *
+
+def getEndState(size):
+	liste = [[-1 for j in range(size)] for i in range(size)]
+	ligne = 0
+	colomne = -1
+	direction = 0 # 0 = droite, 1 = bas, 2 = gauche, 3 = haut
+	num = 1
+	while (True):
+		if direction == 0:
+			colomne += 1
+		elif direction == 1:
+			ligne += 1
+		elif direction == 2:
+			colomne -= 1
+		else:
+			ligne -= 1
+
+		if (colomne == size - 1 or liste[ligne][colomne + 1] != -1) and direction == 0:
+			direction = 1
+		elif (ligne == size - 1 or liste[ligne + 1][colomne] != -1) and direction == 1:
+			direction = 2
+		elif (colomne == 0 or liste[ligne][colomne - 1] != -1) and direction == 2:
+			direction = 3
+		elif (ligne == 0 or liste[ligne - 1][colomne] != -1 and direction) == 3:
+			direction = 0
+		liste[ligne][colomne] = num % (size * size)
+		if (num == size * size):
+			return (State(liste=liste))
+		num += 1
 
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser()
@@ -25,7 +55,14 @@ if __name__ == '__main__':
 			initial_state = State(size=args.size)
 	except ValueError as e:
 		print (str(e))
+		sys.exit(2);
 	except NPuzzleError as e:
 		print (str(e))
+		sys.exit(3);
 	except IOError as e:
 		print("An error occured : " + str(e))
+		sys.exit(4);
+	end_state = getEndState(initial_state.size)
+	print (initial_state)
+	print (end_state)
+	solve(initial_state, end_state)
