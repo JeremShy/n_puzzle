@@ -3,6 +3,7 @@
 import argparse
 import sys
 from State import State
+from NPuzzleError import NPuzzleError
 
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser()
@@ -24,5 +25,7 @@ if __name__ == '__main__':
 			initial_state = State(size=args.size)
 	except ValueError as e:
 		print (str(e))
-		
-
+	except NPuzzleError as e:
+		print (str(e))
+	except IOError as e:
+		print("An error occured : " + str(e))
