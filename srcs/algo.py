@@ -33,7 +33,6 @@ def countain_pq(liste, to_check):
 			return elem
 	return False
 
-
 def solve(initial_state, end_state):
 	initialize_map(end_state)
 	initial_state.calcHeuristique()
@@ -42,14 +41,14 @@ def solve(initial_state, end_state):
 	# openset = []
 	openset = PriorityQueue()
 
-	openset.put_nowait((initial_state.heuristique, initial_state))
-	closedset = []
+	openset.put_nowait((initial_state.heuristique + initial_state.g, initial_state))
+	closedset = {}
 
 	# print("Initial state")
 	# print (initial_state)
 	while (openset):
 		current_heur, current = openset.get_nowait()
-		closedset.append(current)
+		closedset[str(current.state)] = 1
 		# print (current)
 		
 		if (current.heuristique == 0):
@@ -61,11 +60,11 @@ def solve(initial_state, end_state):
 		if (not neighbors):			
 			continue
 		for neighbor in neighbors:
-			if countain(closedset, neighbor):
+			if str(neighbor.state) in closedset:
 				continue
 			tmp = countain_pq(openset, neighbor)
 			if (tmp == False):
-				pouet = (neighbor.heuristique, neighbor)
+				pouet = (neighbor.heuristique + neighbor.g, neighbor)
 				openset.put_nowait(pouet)
 			else:
 				if (tmp.g > neighbor.g):
