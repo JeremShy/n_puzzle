@@ -2,9 +2,12 @@
 
 import argparse
 import sys
+
+import srcs.globals
+
 from srcs.State import State
-from srcs.NPuzzleError import NPuzzleError
 from srcs.algo import *
+from srcs.NPuzzleError import NPuzzleError
 
 def getEndState(size):
 	liste = [[-1 for j in range(size)] for i in range(size)]

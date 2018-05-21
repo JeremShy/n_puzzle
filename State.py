@@ -1,6 +1,6 @@
 from random import shuffle
 import re
-from srcs.NPuzzleError import NPuzzleError
+#from srcs.globals import g_hash_end_state
 
 class State:
 	def __generateRandom(self, size):
@@ -21,7 +21,7 @@ class State:
 		if number < 3:
 			raise NPuzzleError("The size of the puzzle can't be lower than 3")
 		return (number)
-	
+
 	def __parseOtherLine(self, listeuh):
 		print("In other line")
 		if len(listeuh) != self.size:

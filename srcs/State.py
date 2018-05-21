@@ -1,5 +1,9 @@
 from random import shuffle
 import re
+#from srcs.globals import g_hash_end_state
+# from srcs.globals import g_hash_end_state
+
+import srcs.globals
 
 class State:
 	def __generateRandom(self, size):
@@ -75,8 +79,12 @@ class State:
 		return ret
 
 	def manhattanDistance(self):
-		for i in range (self.size * self.size - 1):
-			 pass
+		global g_hash_end_state
+		print (srcs.globals.g_hash_end_state)
+		acc = 0
+		for i in range (self.size * self.size):
+			 acc += abs(i % self.size - srcs.globals.g_hash_end_state[self.state[i % self.size][i // self.size]][0]) + abs(i // self.size - srcs.globals.g_hash_end_state[self.state[i % self.size][i // self.size]][1])
+		return acc
 
 	def __init__(self, *args, **kwargs):
 		self.state = []
