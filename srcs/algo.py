@@ -43,20 +43,21 @@ def solve(initial_state, end_state):
 
 	openset = PriorityQueue()
 
-	openset.put_nowait((initial_state.heuristique + initial_state.g, initial_state))
+	openset.put((initial_state.heuristique + initial_state.g, initial_state))
 	closedset = {}
 
 	while (openset):
-		current_heur, current = openset.get_nowait()
+		current_heur, current = openset.get()
 		closedset[str(current.state)] = 1
-		
-		if (current.heuristique == 0):
+
+		if (current.state == end_state.state):
 			print("Is ok")
 			print (current)
 			print (current.g)
 			return True
 		neighbors = current.getNeighbors()
-		if (not neighbors):			
+		print (current)
+		if (not neighbors):
 			continue
 		for neighbor in neighbors:
 			if str(neighbor.state) in closedset:
@@ -64,7 +65,7 @@ def solve(initial_state, end_state):
 			tmp = countain_pq(openset, neighbor)
 			if (tmp == False):
 				pouet = (neighbor.heuristique + neighbor.g, neighbor)
-				openset.put_nowait(pouet)
+				openset.put(pouet)
 			else:
 				if (tmp.g > neighbor.g):
 					# print ("replacing " + str(tmp.heuristique + tmp.g) + "with" + str(neighbor.heuristique + neighbor.g))
