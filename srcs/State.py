@@ -2,12 +2,12 @@ from random import shuffle
 import re
 import functools
 from copy import deepcopy
-#from srcs.globals import g_hash_end_state
-# from srcs.globals import g_hash_end_state
 
 import srcs.globals
 
 class State:
+	heuristic_used = 0
+
 	def __lt__(self, other):
 		return (0)
 
@@ -22,7 +22,6 @@ class State:
 			self.state.append(tmp)
 
 	def __parseFirstLine(self, listeuh):
-		# print("In first line")
 		if len(listeuh) != 1:
 			raise NPuzzleError("Invalid first line")
 		number = int(listeuh[0])
@@ -31,26 +30,21 @@ class State:
 		return (number)
 	
 	def __parseOtherLine(self, listeuh):
-		# print("In other line")
 		if len(listeuh) != self.size:
 			raise NPuzzleError("Invalid line in file")
 		temp = [int(i) for i in listeuh]
 		self.state.append(temp)
-		# print (temp)
 
 	def __parseFile(self, filename):
-		# print ("Parsing file : " + filename)
 		firstTime = True
 		file = open(filename, "r")
 		for line in file:
 			handled = line
-			regex = re.compile(r'\#.*', re.DOTALL)
 			handled = re.sub(regex, '', handled)
 			handled = handled.strip()
 			if not handled:
 				continue
 			temp = handled.split()
-			# print (temp)
 			try:
 				if firstTime == True:
 					self.size = self.__parseFirstLine(temp)
@@ -85,16 +79,21 @@ class State:
 
 	def manhattanDistance(self):
 		global g_hash_end_state
-		# print (srcs.globals.g_hash_end_state)
 		acc = 0
 		for i in range (self.size * self.size):
 			 acc += abs(i % self.size - srcs.globals.g_hash_end_state[self.state[i % self.size][i // self.size]][0]) + abs(i // self.size - srcs.globals.g_hash_end_state[self.state[i % self.size][i // self.size]][1])
 		return acc
 
+	def misplacedTiles(self):
+		
+
 	def calcHeuristique(self):
 		global g_hash_end_state
 		if (srcs.globals.g_hash_end_state != []):
-			self.heuristique = self.manhattanDistance()
+			if State.heuristic_used == 0:
+				self.heuristique = self.manhattanDistance()
+			elif State.heuristic_used == 1:
+				self.heuristique = self.misplacedTiles()
 	
 	def canMoveUp(self):
 		for y in range(self.size):
@@ -167,8 +166,6 @@ class State:
 	
 	def getMovedRight(self):
 		copy = State(state=self)
-		# print ("Init")
-		# print(copy)
 		for y in range(copy.size):
 			for x in range(copy.size):
 				if (copy.state[y][x] == 0):
@@ -176,8 +173,6 @@ class State:
 					copy.state[y][x + 1] = copy.state[y][x]
 					copy.state[y][x] = tmp
 					copy.calcHeuristique()
-					# print ("copy")
-					# print (copy)
 					return copy
 
 	def getNeighbors(self):
@@ -191,16 +186,50 @@ class State:
 		if (self.canMoveRight() == True):
 			ret.append(self.getMovedRight())
 		return (ret)
+	
+	def isSolvable(self, endState):
+		table_de_hash = {}
+		i = 1
+		for row in endState.state:
+			for value in row:
+				if value != 0:
+					table_de_hash[value] = i
+					i += 1
+		j = 0
+		for row in self.state:
+			for value in row:
+				if value == 0:
+					row_of_hole = j
+			j += 1
+
+
+		new_list = []
+		for i in self.state:
+			new_list += i
+		new_list.remove(0)
+		inversions = 0
+		for i in range(len(new_list)):
+			for j in range(i + 1, len(new_list)):
+				if table_de_hash[new_list[i]] > table_de_hash[new_list[j]]:
+					inversions += 1
+		if (self.size % 2 == 0):
+			if (inversions + row_of_hole) % 2 == 0:
+				return True
+			else:
+				return False
+		else:
+			if inversions % 2 == 0:
+				return True
+			else:
+				return False
 
 	def __init__(self, *args, **kwargs):
 		self.state = []
 		if ("file" in kwargs):
-			# print ("We need to parse the file " + kwargs["file"])
 			self.__parseFile(kwargs["file"])
 			if self.__isValid() == False:
 				raise NPuzzleError("Invalid map.")
 		elif ("size" in kwargs):
-			# print ("We need to generate a NxN puzzle with N=" + str(kwargs["size"]))
 			if (kwargs["size"] < 3):
 				raise NPuzzleError("Can't generate a puzzle with size lower than 3.")
 			self.__generateRandom(kwargs["size"])
@@ -213,7 +242,7 @@ class State:
 			self.size = kwargs["state"].size
 			self.heuristique = kwargs["state"].heuristique
 			self.g = kwargs["state"].g + 1
-			return ;
+			return 
 		else:
 			raise NPuzzleError("You must specify a 'file' or 'size' argument.")
 		self.calcHeuristique()

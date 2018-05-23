@@ -43,11 +43,17 @@ if __name__ == '__main__':
 	group = parser.add_mutually_exclusive_group()
 	group.add_argument("-f", "--file", help="Specify an initial state of the puzzle.")
 	group.add_argument("-s", "--size", type=int, help="Specify the size of a puzzle to generate.")
+
+	parser.add_argument("-d", "--heuristic", type=int, help="Heuristic: 0 => Manhattan Distance, 2 => Misplaced Tiles, 3 => Linear Conflict")
+
 	args = parser.parse_args()
 
 	if args.file is None and args.size is None:
 		print (sys.argv[0] + ": You must specify a puzzle acquirement method.")
 		sys.exit(1)
+	if (args.heuristic is None or args.heuristic < 0 or args.heuristic > 3):
+		print ("No valid heuristic specified. Choosing Manhattan Distance as default Heuristic.")
+		args.heuristic = 0
 
 	try:
 		if args.file:
@@ -58,14 +64,17 @@ if __name__ == '__main__':
 			initial_state = State(size=args.size)
 	except ValueError as e:
 		print (str(e))
-		sys.exit(2);
+		sys.exit(2)
 	except NPuzzleError as e:
 		print (str(e))
-		sys.exit(3);
+		sys.exit(3)
 	except IOError as e:
 		print("An error occured : " + str(e))
-		sys.exit(4);
+		sys.exit(4)
 	end_state = getEndState(initial_state.size)
 	print (initial_state)
 	print (end_state)
-	solve(initial_state, end_state)
+	if (initial_state.isSolvable(end_state) == False):
+		print("This puzzle can't be solved")
+	else:
+		solve(initial_state, end_state)
