@@ -55,6 +55,7 @@ if __name__ == '__main__':
 		print ("No valid heuristic specified. Choosing Manhattan Distance as default Heuristic.")
 		args.heuristic = 0
 
+	State.heuristic_used = args.heuristic
 	try:
 		if args.file:
 			print ("File to read : " + args.file)

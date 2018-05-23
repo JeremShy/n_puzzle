@@ -40,6 +40,7 @@ class State:
 		file = open(filename, "r")
 		for line in file:
 			handled = line
+			regex = re.compile(r'\#.*', re.DOTALL)
 			handled = re.sub(regex, '', handled)
 			handled = handled.strip()
 			if not handled:
@@ -85,7 +86,14 @@ class State:
 		return acc
 
 	def misplacedTiles(self):
-		
+		global g_hash_end_state
+		acc = 0
+		for y in range(self.size):
+			for x in range(self.size):
+				if ((y, x) != srcs.globals.g_hash_end_state[self.state[y][x]]):
+					acc += 1
+		return acc
+
 
 	def calcHeuristique(self):
 		global g_hash_end_state

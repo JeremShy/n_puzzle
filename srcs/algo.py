@@ -22,7 +22,7 @@ def get_lowest_f(liste):
 	return min_elem
 
 def countain(liste, to_check):
-	for elem in liste:
+	for elem in liste:0
 		if elem.state == to_check.state:
 			return elem
 	return False
@@ -36,20 +36,19 @@ def countain_pq(liste, to_check):
 def solve(initial_state, end_state):
 	initialize_map(end_state)
 	initial_state.calcHeuristique()
+	print ("initial_state : " + str(initial_state.heuristique))
+
 	end_state.calcHeuristique()
-	# print (initial_state)
-	# openset = []
+	print ("end_state : " + str(end_state.heuristique))
+
 	openset = PriorityQueue()
 
 	openset.put_nowait((initial_state.heuristique + initial_state.g, initial_state))
-	closedset = {}
+		closedset = {}
 
-	# print("Initial state")
-	# print (initial_state)
 	while (openset):
 		current_heur, current = openset.get_nowait()
 		closedset[str(current.state)] = 1
-		# print (current)
 		
 		if (current.heuristique == 0):
 			print("Is ok")
