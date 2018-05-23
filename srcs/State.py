@@ -2,6 +2,7 @@ from random import shuffle
 import re
 import functools
 from copy import deepcopy
+from srcs.NPuzzleError import NPuzzleError
 
 import srcs.globals
 
@@ -38,6 +39,7 @@ class State:
 	def __parseFile(self, filename):
 		firstTime = True
 		file = open(filename, "r")
+		lineNumber = 0
 		for line in file:
 			handled = line
 			regex = re.compile(r'\#.*', re.DOTALL)
@@ -58,7 +60,7 @@ class State:
 						raise NPuzzleError("Invalid number of lines in file")
 			except ValueError as e:
 				raise NPuzzleError("Error while parsing a line : Please enter only valid numbers")
-		if lineNumber != self.size:
+		if lineNumber == 0 or lineNumber != self.size:
 			raise NPuzzleError("Invalid nuber of lines in file")
 
 	def __isValid(self):
@@ -94,6 +96,23 @@ class State:
 					acc += 1
 		return acc
 
+	def LinearConflict(self):
+		global g_hash_end_state
+		acc = 0
+		for row_number in range(self.size):
+			for col_number in range(self.size):
+				for search_col in range(col_number + 1, self.size):
+					if srcs.globals.g_hash_end_state[self.state[row_number][col_number]][0] == row_number and srcs.globals.g_hash_end_state[self.state[row_number][search_col]][0] == row_number:
+						if srcs.globals.g_hash_end_state[self.state[row_number][search_col]][1] <  srcs.globals.g_hash_end_state[self.state[row_number][col_number]][1]:
+							acc += 2
+
+		for col_number in range(self.size):
+			for row_number in range(self.size):
+				for search_row in range(row_number + 1, self.size):
+					if srcs.globals.g_hash_end_state[self.state[row_number][col_number]][1] == col_number and srcs.globals.g_hash_end_state[self.state[search_row][col_number]][1] == col_number:
+						if srcs.globals.g_hash_end_state[self.state[search_row][col_number]][0] <  srcs.globals.g_hash_end_state[self.state[row_number][col_number]][0]:
+							acc += 2
+		return self.manhattanDistance() + acc
 
 	def calcHeuristique(self):
 		global g_hash_end_state
@@ -102,6 +121,8 @@ class State:
 				self.heuristique = self.manhattanDistance()
 			elif State.heuristic_used == 1:
 				self.heuristique = self.misplacedTiles()
+			elif State.heuristic_used == 2:
+				self.heuristique = self.LinearConflict()
 	
 	def canMoveUp(self):
 		for y in range(self.size):

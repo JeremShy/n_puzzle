@@ -22,7 +22,7 @@ def get_lowest_f(liste):
 	return min_elem
 
 def countain(liste, to_check):
-	for elem in liste:0
+	for elem in liste:
 		if elem.state == to_check.state:
 			return elem
 	return False
@@ -44,7 +44,7 @@ def solve(initial_state, end_state):
 	openset = PriorityQueue()
 
 	openset.put_nowait((initial_state.heuristique + initial_state.g, initial_state))
-		closedset = {}
+	closedset = {}
 
 	while (openset):
 		current_heur, current = openset.get_nowait()
