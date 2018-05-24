@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+import profile
+
 import argparse
 import sys
 
@@ -38,7 +40,7 @@ def getEndState(size):
 			return (State(liste=liste))
 		num += 1
 
-if __name__ == '__main__':
+def func():
 	parser = argparse.ArgumentParser()
 	group = parser.add_mutually_exclusive_group()
 	group.add_argument("-f", "--file", help="Specify an initial state of the puzzle.")
@@ -58,7 +60,6 @@ if __name__ == '__main__':
 	State.heuristic_used = args.heuristic
 	try:
 		if args.file:
-			print ("File to read : " + args.file)
 			initial_state = State(file=args.file)
 		else:
 			print ("The puzzle will be randomly generated")
@@ -73,9 +74,11 @@ if __name__ == '__main__':
 		print("An error occured : " + str(e))
 		sys.exit(4)
 	end_state = getEndState(initial_state.size)
-	print (initial_state)
-	print (end_state)
 	if (initial_state.isSolvable(end_state) == False):
 		print("This puzzle can't be solved")
 	else:
 		solve(initial_state, end_state)
+
+if __name__ == '__main__':
+	# profile.run('func()')
+	func()

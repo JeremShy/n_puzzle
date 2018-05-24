@@ -2,6 +2,7 @@
 import srcs.globals
 from queue import PriorityQueue
 from queue import Queue
+from srcs.State import State
 
 def	initialize_map(end_state):
 	# print (srcs.globals.g_hash_end_state)
@@ -11,64 +12,53 @@ def	initialize_map(end_state):
 			srcs.globals.g_hash_end_state[end_state.state[i][j]] = (i, j)
 	# print (srcs.globals.g_hash_end_state)
 
-def get_lowest_f(liste):
-	min_val = -1
-	for elem in liste:
-		if (min_val == -1 or elem.g + elem.heuristique <= min_val):
-			min_val = elem.g + elem.heuristique
-			min_elem = elem
-	liste.remove(min_elem)
-	# print ("min : " + str(min_val))
-	return min_elem
-
-def countain(liste, to_check):
-	for elem in liste:
-		if elem.state == to_check.state:
-			return elem
-	return False
-
 def countain_pq(liste, to_check):
-	for heuristique, elem in liste.queue:
-		if elem.state == to_check.state:
-			return elem
-	return False
+	if (to_check.heuristique + to_check.g, to_check) in liste.queue:
+		return liste.queue.index((to_check.heuristique + to_check.g, to_check))
+	else:
+		return False
 
 def solve(initial_state, end_state):
 	initialize_map(end_state)
 	initial_state.calcHeuristique()
-	print ("initial_state : " + str(initial_state.heuristique))
+
+	initial_state.predecesseur = False
 
 	end_state.calcHeuristique()
-	print ("end_state : " + str(end_state.heuristique))
 
 	openset = PriorityQueue()
 
 	openset.put((initial_state.heuristique + initial_state.g, initial_state))
 	closedset = {}
 
-	while (openset):
+	total_number_selected_in_openset = 1
+
+	while (not openset.empty()):
 		current_heur, current = openset.get()
 		closedset[str(current.state)] = 1
 
 		if (current.state == end_state.state):
-			print("Is ok")
-			print (current)
-			print (current.g)
+			print ("Total number of states ever selected in the \"opened\" set: " + str(total_number_selected_in_openset))
+			print ("Maximum number of states ever represented in memory at the same time during the search: " + str(State.max_numbers))
+			print ("Number of moves required to transition from the initial state to the final state: " + str(current.g) + "\n")
+			x = ""
+			while current != False:
+				x = str(current) + "\n" + x
+				current = current.predecesseur
+			print (x, end="")
 			return True
 		neighbors = current.getNeighbors()
-		print (current)
-		if (not neighbors):
-			continue
-		for neighbor in neighbors:
-			if str(neighbor.state) in closedset:
-				continue
-			tmp = countain_pq(openset, neighbor)
-			if (tmp == False):
-				pouet = (neighbor.heuristique + neighbor.g, neighbor)
-				openset.put(pouet)
-			else:
-				if (tmp.g > neighbor.g):
-					# print ("replacing " + str(tmp.heuristique + tmp.g) + "with" + str(neighbor.heuristique + neighbor.g))
-					tmp.g = neighbor.g
-					# TODO predecesseur
-
+		# print (current)
+		if neighbors:
+			for neighbor in neighbors:
+				neighbor.predecesseur = current
+				if not str(neighbor.state) in closedset:
+					tmp = countain_pq(openset, neighbor)
+					if (tmp == False):
+						openset.put((neighbor.heuristique + neighbor.g, neighbor))
+						total_number_selected_in_openset += 1
+					else:
+						if (openset.queue[tmp][1].g > neighbor.g):
+							openset.queue[tmp][1].g = neighbor.g
+							print ("a")
+							openset.queue[tmp][1].predecesseur = neighbor.predecesseur

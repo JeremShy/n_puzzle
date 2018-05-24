@@ -8,9 +8,15 @@ import srcs.globals
 
 class State:
 	heuristic_used = 0
+	current_number = 0
+	max_numbers = 0
 
 	def __lt__(self, other):
 		return (0)
+	def __eq__(self, other):
+		if (type(other) is not State):
+			return False
+		return (self.state == other.state)
 
 	def __generateRandom(self, size):
 		listeuh = [i for i in range(size * size)]
@@ -254,6 +260,9 @@ class State:
 
 	def __init__(self, *args, **kwargs):
 		self.state = []
+		State.current_number += 1
+		if (State.current_number > State.max_numbers):
+			State.max_numbers = State.current_number
 		if ("file" in kwargs):
 			self.__parseFile(kwargs["file"])
 			if self.__isValid() == False:
@@ -276,4 +285,6 @@ class State:
 			raise NPuzzleError("You must specify a 'file' or 'size' argument.")
 		self.calcHeuristique()
 		self.g = 0
-
+	
+	def __del__(self):
+		State.current_number -= 1
