@@ -1,12 +1,9 @@
 #!/usr/bin/env python3
 
-import profile
-
 import argparse
 import sys
 
 import srcs.globals
-
 from srcs.State import State
 from srcs.algo import *
 from srcs.NPuzzleError import NPuzzleError
@@ -45,9 +42,7 @@ def func():
 	group = parser.add_mutually_exclusive_group()
 	group.add_argument("-f", "--file", help="Specify an initial state of the puzzle.")
 	group.add_argument("-s", "--size", type=int, help="Specify the size of a puzzle to generate.")
-
 	parser.add_argument("-d", "--heuristic", type=int, help="Heuristic: 0 => Manhattan Distance, 2 => Misplaced Tiles, 3 => Linear Conflict")
-
 	args = parser.parse_args()
 
 	if args.file is None and args.size is None:
@@ -80,5 +75,4 @@ def func():
 		solve(initial_state, end_state)
 
 if __name__ == '__main__':
-	# profile.run('func()')
 	func()
