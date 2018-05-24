@@ -240,13 +240,13 @@ class State:
 				if value == 0:
 					row_of_hole = j
 			j += 1
-
-
 		new_list = []
 		for i in self.state:
 			new_list += i
 		new_list.remove(0)
 		inversions = 0
+		if (self.size - 2) % 4 == 0:
+			inversions += 1
 		for i in range(len(new_list)):
 			for j in range(i + 1, len(new_list)):
 				if table_de_hash[new_list[i]] > table_de_hash[new_list[j]]:
