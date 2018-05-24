@@ -41,7 +41,10 @@ def solve(initial_state, end_state):
 			print ("Number of moves required to transition from the initial state to the final state: " + str(current.g) + "\n")
 			x = ""
 			while current != False:
-				x = str(current) + "\n" + x
+				if (x == ""):
+					x = str(current) + x
+				else:
+					x = str(current) + "\n" + x
 				current = current.predecesseur
 			print (x, end="")
 			return True
@@ -57,7 +60,6 @@ def solve(initial_state, end_state):
 						total_number_selected_in_openset += 1
 					else:
 						if (openset.queue[tmp][1].g > neighbor.g):
-							print ("FEWFWEFWEEFWWEFEFWEFW")
 							openset.queue[tmp][1].g = neighbor.g
 							openset.queue[tmp][1].predecesseur = neighbor.predecesseur
 	print ("This puzzle can't be solved.")
