@@ -42,7 +42,7 @@ def func():
 	group = parser.add_mutually_exclusive_group()
 	group.add_argument("-f", "--file", help="Specify an initial state of the puzzle.")
 	group.add_argument("-s", "--size", type=int, help="Specify the size of a puzzle to generate.")
-	parser.add_argument("-d", "--heuristic", type=int, help="Heuristic: 0 => Manhattan Distance, 2 => Misplaced Tiles, 3 => Linear Conflict")
+	parser.add_argument("-d", "--heuristic", type=int, help="Heuristic: 0 => Manhattan Distance, 1 => Misplaced Tiles, 2 => Linear Conflict")
 	args = parser.parse_args()
 
 	if args.file is None and args.size is None:

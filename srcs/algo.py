@@ -57,6 +57,7 @@ def solve(initial_state, end_state):
 						total_number_selected_in_openset += 1
 					else:
 						if (openset.queue[tmp][1].g > neighbor.g):
+							print ("FEWFWEFWEEFWWEFEFWEFW")
 							openset.queue[tmp][1].g = neighbor.g
 							openset.queue[tmp][1].predecesseur = neighbor.predecesseur
 	print ("This puzzle can't be solved.")
