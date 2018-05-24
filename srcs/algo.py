@@ -1,40 +1,38 @@
-# from srcs.globals import srcs.globals.g_hash_end_state
 import srcs.globals
 from queue import PriorityQueue
 from queue import Queue
 from srcs.State import State
 
 def	initialize_map(end_state):
-	# print (srcs.globals.g_hash_end_state)
 	srcs.globals.g_hash_end_state = [1 for i in range (end_state.size * end_state.size)]
 	for i in range(end_state.size):
 		for j in range(end_state.size):
 			srcs.globals.g_hash_end_state[end_state.state[i][j]] = (i, j)
-	# print (srcs.globals.g_hash_end_state)
 
-def countain_pq(liste, to_check):
-	if (to_check.heuristique + to_check.g, to_check) in liste.queue:
-		return liste.queue.index((to_check.heuristique + to_check.g, to_check))
-	else:
-		return False
+def countain_pq(liste, to_check, hash_table):
+	try:
+		if (to_check.str_state in hash_table):
+			return liste.queue.index((to_check.heuristique + to_check.g, to_check))
+		return (False)
+	except ValueError as e:
+		return (False)
 
 def solve(initial_state, end_state):
 	initialize_map(end_state)
 	initial_state.calcHeuristique()
-
 	initial_state.predecesseur = False
-
 	end_state.calcHeuristique()
-
 	openset = PriorityQueue()
-
-	openset.put((initial_state.heuristique + initial_state.g, initial_state))
+	openset.put_nowait((initial_state.heuristique + initial_state.g, initial_state))
 	closedset = {}
+
+	present_in_openset = {}
+	present_in_openset[initial_state.str_state] = 1
 
 	total_number_selected_in_openset = 1
 
 	while (not openset.empty()):
-		current_heur, current = openset.get()
+		current_heur, current = openset.get_nowait()
 		closedset[str(current.state)] = 1
 
 		if (current.state == end_state.state):
@@ -48,14 +46,14 @@ def solve(initial_state, end_state):
 			print (x, end="")
 			return True
 		neighbors = current.getNeighbors()
-		# print (current)
 		if neighbors:
 			for neighbor in neighbors:
-				neighbor.predecesseur = current
-				if not str(neighbor.state) in closedset:
-					tmp = countain_pq(openset, neighbor)
+				if not neighbor.str_state in closedset:
+					neighbor.predecesseur = current
+					tmp = countain_pq(openset, neighbor, present_in_openset)
 					if (tmp == False):
-						openset.put((neighbor.heuristique + neighbor.g, neighbor))
+						openset.put_nowait((neighbor.heuristique + neighbor.g, neighbor))
+						present_in_openset[neighbor.str_state] = 1
 						total_number_selected_in_openset += 1
 					else:
 						if (openset.queue[tmp][1].g > neighbor.g):

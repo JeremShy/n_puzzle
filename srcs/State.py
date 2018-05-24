@@ -148,6 +148,7 @@ class State:
 					copy.state[y - 1][x] = copy.state[y][x]
 					copy.state[y][x] = tmp
 					copy.calcHeuristique()
+					copy.str_state = str(copy.state)
 					return copy
 
 	def canMoveDown(self):
@@ -168,6 +169,7 @@ class State:
 					copy.state[y + 1][x] = copy.state[y][x]
 					copy.state[y][x] = tmp
 					copy.calcHeuristique()
+					copy.str_state = str(copy.state)
 					return copy
 
 	def canMoveLeft(self):
@@ -188,6 +190,7 @@ class State:
 					copy.state[y][x - 1] = copy.state[y][x]
 					copy.state[y][x] = tmp
 					copy.calcHeuristique()
+					copy.str_state = str(copy.state)
 					return copy
 
 	def canMoveRight(self):
@@ -208,6 +211,7 @@ class State:
 					copy.state[y][x + 1] = copy.state[y][x]
 					copy.state[y][x] = tmp
 					copy.calcHeuristique()
+					copy.str_state = str(copy.state)
 					return copy
 
 	def getNeighbors(self):
@@ -261,6 +265,7 @@ class State:
 	def __init__(self, *args, **kwargs):
 		self.state = []
 		State.current_number += 1
+
 		if (State.current_number > State.max_numbers):
 			State.max_numbers = State.current_number
 		if ("file" in kwargs):
@@ -285,6 +290,7 @@ class State:
 			raise NPuzzleError("You must specify a 'file' or 'size' argument.")
 		self.calcHeuristique()
 		self.g = 0
+		self.str_state = str(self.state)
 	
 	def __del__(self):
 		State.current_number -= 1
