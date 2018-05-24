@@ -60,5 +60,6 @@ def solve(initial_state, end_state):
 					else:
 						if (openset.queue[tmp][1].g > neighbor.g):
 							openset.queue[tmp][1].g = neighbor.g
-							print ("a")
 							openset.queue[tmp][1].predecesseur = neighbor.predecesseur
+	print ("This puzzle can't be solved.")
+	return True
