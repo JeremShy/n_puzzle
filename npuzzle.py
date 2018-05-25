@@ -7,6 +7,7 @@ import srcs.globals
 from srcs.State import State
 from srcs.algo import *
 from srcs.NPuzzleError import NPuzzleError
+import profile
 
 def getEndState(size):
 	liste = [[-1 for j in range(size)] for i in range(size)]
@@ -75,4 +76,5 @@ def func():
 		solve(initial_state, end_state)
 
 if __name__ == '__main__':
+	# profile.run("func()")
 	func()

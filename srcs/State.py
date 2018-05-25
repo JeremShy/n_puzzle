@@ -1,7 +1,6 @@
 from random import shuffle
 import re
 import functools
-from copy import deepcopy
 from srcs.NPuzzleError import NPuzzleError
 
 import srcs.globals
@@ -131,88 +130,72 @@ class State:
 				self.heuristique = self.LinearConflict()
 	
 	def canMoveUp(self):
-		for y in range(self.size):
-			for x in range(self.size):
-				if (self.state[y][x] == 0):
-					if (y == 0):
-						return False
-					else:
-						return True
+		if (self.hole_position[0] == 0):
+			return False
+		else:
+			return True
 	
 	def getMovedUp(self):
 		copy = State(state=self)
-		for y in range(copy.size):
-			for x in range(copy.size):
-				if (copy.state[y][x] == 0):
-					tmp = copy.state[y - 1][x]
-					copy.state[y - 1][x] = copy.state[y][x]
-					copy.state[y][x] = tmp
-					copy.calcHeuristique()
-					copy.str_state = str(copy.state)
-					return copy
+		y, x = self.hole_position
+		tmp = copy.state[y - 1][x]
+		copy.state[y - 1][x] = copy.state[y][x]
+		copy.state[y][x] = tmp
+		copy.calcHeuristique()
+		copy.str_state = str(copy.state)
+		copy.hole_position = (y - 1, x)
+		return copy
 
 	def canMoveDown(self):
-		for y in range(self.size):
-			for x in range(self.size):
-				if (self.state[y][x] == 0):
-					if (y == self.size - 1):
-						return False
-					else:
-						return True
+		if (self.hole_position[0] == self.size - 1):
+			return False
+		else:
+			return True
 	
 	def getMovedDown(self):
 		copy = State(state=self)
-		for y in range(copy.size):
-			for x in range(copy.size):
-				if (copy.state[y][x] == 0):
-					tmp = copy.state[y + 1][x]
-					copy.state[y + 1][x] = copy.state[y][x]
-					copy.state[y][x] = tmp
-					copy.calcHeuristique()
-					copy.str_state = str(copy.state)
-					return copy
+		y, x = self.hole_position
+		tmp = copy.state[y + 1][x]
+		copy.state[y + 1][x] = copy.state[y][x]
+		copy.state[y][x] = tmp
+		copy.calcHeuristique()
+		copy.str_state = str(copy.state)
+		copy.hole_position = (y + 1, x)
+		return copy
 
 	def canMoveLeft(self):
-		for y in range(self.size):
-			for x in range(self.size):
-				if (self.state[y][x] == 0):
-					if (x == 0):
-						return False
-					else:
-						return True
+		if (self.hole_position[1] == 0):
+			return False
+		else:
+			return True
 	
 	def getMovedLeft(self):
-		copy = State(state=self)
-		for y in range(copy.size):
-			for x in range(copy.size):
-				if (copy.state[y][x] == 0):
-					tmp = copy.state[y][x - 1]
-					copy.state[y][x - 1] = copy.state[y][x]
-					copy.state[y][x] = tmp
-					copy.calcHeuristique()
-					copy.str_state = str(copy.state)
-					return copy
+		copy = State(state=self)	
+		y, x = self.hole_position
+		tmp = copy.state[y][x - 1]
+		copy.state[y][x - 1] = copy.state[y][x]
+		copy.state[y][x] = tmp
+		copy.calcHeuristique()
+		copy.str_state = str(copy.state)
+		copy.hole_position = (y, x - 1)
+		return copy
 
 	def canMoveRight(self):
-		for y in range(self.size):
-			for x in range(self.size):
-				if (self.state[y][x] == 0):
-					if (x == self.size - 1):
-						return False
-					else:
-						return True
+		if (self.hole_position[1] == self.size - 1):
+			return False
+		else:
+			return True
 	
 	def getMovedRight(self):
 		copy = State(state=self)
-		for y in range(copy.size):
-			for x in range(copy.size):
-				if (copy.state[y][x] == 0):
-					tmp = copy.state[y][x + 1]
-					copy.state[y][x + 1] = copy.state[y][x]
-					copy.state[y][x] = tmp
-					copy.calcHeuristique()
-					copy.str_state = str(copy.state)
-					return copy
+		y, x = self.hole_position
+		tmp = copy.state[y][x + 1]
+		copy.state[y][x + 1] = copy.state[y][x]
+		copy.state[y][x] = tmp
+		copy.calcHeuristique()
+		copy.str_state = str(copy.state)
+		copy.hole_position = (y, x + 1)
+		return copy
 
 	def getNeighbors(self):
 		ret = []
@@ -262,9 +245,25 @@ class State:
 			else:
 				return False
 
+	def find_hole_position(self):
+		for y in range(self.size):
+			for x in range(self.size):
+				if (self.state[y][x] == 0):
+					return (y, x)
+	
+	def our_copy(self, to_copy):
+		ret = []
+		for i in to_copy:
+			tmp = [j for j in i]
+			ret = ret + [tmp]
+		return ret
+
+
 	def __init__(self, *args, **kwargs):
 		self.state = []
 		State.current_number += 1
+
+		self.hole_position = () # (y, x)
 
 		if (State.current_number > State.max_numbers):
 			State.max_numbers = State.current_number
@@ -278,10 +277,10 @@ class State:
 			self.__generateRandom(kwargs["size"])
 			self.size = int(kwargs["size"])
 		elif ("liste" in kwargs):
-			self.state = deepcopy(kwargs["liste"])
+			self.state = self.our_copy(kwargs["liste"])
 			self.size = len(kwargs["liste"])
 		elif ("state" in kwargs):
-			self.state = deepcopy(kwargs["state"].state)
+			self.state = self.our_copy(kwargs["state"].state)
 			self.size = kwargs["state"].size
 			self.heuristique = kwargs["state"].heuristique
 			self.g = kwargs["state"].g + 1
@@ -290,6 +289,7 @@ class State:
 			raise NPuzzleError("You must specify a 'file' or 'size' argument.")
 		self.calcHeuristique()
 		self.g = 0
+		self.hole_position = self.find_hole_position()
 		self.str_state = str(self.state)
 	
 	def __del__(self):

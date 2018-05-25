@@ -14,7 +14,7 @@ def countain_pq(liste, to_check, hash_table):
 		if (to_check.str_state in hash_table):
 			return liste.queue.index((to_check.heuristique + to_check.g, to_check))
 		return (False)
-	except ValueError as e:
+	except ValueError:
 		return (False)
 
 def solve(initial_state, end_state):
