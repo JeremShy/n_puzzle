@@ -33,7 +33,6 @@ def solve(initial_state, end_state):
 
 	while (not openset.empty()):
 		current_heur, current = openset.get_nowait()
-		closedset[str(current.state)] = 1
 
 		if (current.state == end_state.state):
 			print ("Total number of states ever selected in the \"opened\" set: " + str(total_number_selected_in_openset))
@@ -48,6 +47,7 @@ def solve(initial_state, end_state):
 				current = current.predecesseur
 			print (x, end="")
 			return True
+		closedset[str(current.state)] = 1
 		neighbors = current.getNeighbors()
 		if neighbors:
 			for neighbor in neighbors:

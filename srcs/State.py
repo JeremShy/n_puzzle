@@ -34,7 +34,7 @@ class State:
 		if number < 3:
 			raise NPuzzleError("The size of the puzzle can't be lower than 3")
 		return (number)
-	
+
 	def __parseOtherLine(self, listeuh):
 		if len(listeuh) != self.size:
 			raise NPuzzleError("Invalid line in file")
@@ -128,13 +128,13 @@ class State:
 				self.heuristique = self.misplacedTiles()
 			elif State.heuristic_used == 2:
 				self.heuristique = self.LinearConflict()
-	
+
 	def canMoveUp(self):
 		if (self.hole_position[0] == 0):
 			return False
 		else:
 			return True
-	
+
 	def getMovedUp(self):
 		copy = State(state=self)
 		y, x = self.hole_position
@@ -151,7 +151,7 @@ class State:
 			return False
 		else:
 			return True
-	
+
 	def getMovedDown(self):
 		copy = State(state=self)
 		y, x = self.hole_position
@@ -168,9 +168,9 @@ class State:
 			return False
 		else:
 			return True
-	
+
 	def getMovedLeft(self):
-		copy = State(state=self)	
+		copy = State(state=self)
 		y, x = self.hole_position
 		tmp = copy.state[y][x - 1]
 		copy.state[y][x - 1] = copy.state[y][x]
@@ -185,7 +185,7 @@ class State:
 			return False
 		else:
 			return True
-	
+
 	def getMovedRight(self):
 		copy = State(state=self)
 		y, x = self.hole_position
@@ -208,7 +208,7 @@ class State:
 		if (self.canMoveRight() == True):
 			ret.append(self.getMovedRight())
 		return (ret)
-	
+
 	def isSolvable(self, endState):
 		table_de_hash = {}
 		i = 1
@@ -250,7 +250,7 @@ class State:
 			for x in range(self.size):
 				if (self.state[y][x] == 0):
 					return (y, x)
-	
+
 	def our_copy(self, to_copy):
 		ret = []
 		for i in to_copy:
@@ -284,13 +284,13 @@ class State:
 			self.size = kwargs["state"].size
 			self.heuristique = kwargs["state"].heuristique
 			self.g = kwargs["state"].g + 1
-			return 
+			return
 		else:
 			raise NPuzzleError("You must specify a 'file' or 'size' argument.")
 		self.calcHeuristique()
 		self.g = 0
 		self.hole_position = self.find_hole_position()
 		self.str_state = str(self.state)
-	
+
 	def __del__(self):
 		State.current_number -= 1
